@@ -12,7 +12,7 @@ st.write("Upload a video of a cover drive, and this app will perform a real-time
 uploaded_file = st.file_uploader("Choose a video file...", type=["mp4", "mov", "avi"])
 
 if uploaded_file is not None:
-    # Temporary file handling
+    
     input_tfile = tempfile.NamedTemporaryFile(delete=False, suffix='.' + uploaded_file.name.split('.')[-1])
     input_tfile.write(uploaded_file.read())
     input_path = input_tfile.name
@@ -28,7 +28,7 @@ if uploaded_file is not None:
     col1, col2 = st.columns(2)
 
     with col1:
-        # Video display
+        
         st.header("Annotated Video")
         with open(annotated_video_path, 'rb') as video_file:
             video_bytes = video_file.read()
@@ -43,7 +43,7 @@ if uploaded_file is not None:
     with col2:
         st.header("Final Shot Evaluation")
         if evaluation_report:
-            # Display the Overall Grade
+            
             grade = evaluation_report.get("Overall Skill Grade", "N/A")
             avg_score = evaluation_report.get("Average Score", 0)
             
@@ -51,8 +51,6 @@ if uploaded_file is not None:
             st.progress(avg_score / 10)
             st.divider()
 
-            # --- CORRECTED LOOP ---
-            # Ensure you are looping over the "breakdown" key.
             for category, values in evaluation_report.get("breakdown", {}).items():
                 st.metric(label=category, value=f"{values['score']}/10")
                 st.write(f"**Feedback:** {values['feedback']}")

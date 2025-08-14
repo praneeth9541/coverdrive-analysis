@@ -2,8 +2,6 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-# (calculate_angle and generate_evaluation functions remain the same as the last version)
-# --- Helper function for angle calculation ---
 def calculate_angle(a, b, c):
     a = np.array(a)
     b = np.array(b)
@@ -14,12 +12,12 @@ def calculate_angle(a, b, c):
         angle = 360 - angle
     return angle
 
-# --- Helper function for generating the final report ---
+
 def generate_evaluation(metrics_history):
     if not metrics_history:
         return {}
 
-    # --- Standardized Scoring Logic (1-10) ---
+    
     head_dists = [m['head_knee_dist'] for m in metrics_history]
     avg_head_dist = np.mean(head_dists) if head_dists else 0.15
     head_perf_ratio = max(0, 1 - (avg_head_dist / 0.15))
@@ -60,7 +58,7 @@ def generate_evaluation(metrics_history):
         skill_grade = "Beginner"
 
     evaluation = {
-        "Overall Skill Grade": skill_grade, # Add the grade to the report
+        "Overall Skill Grade": skill_grade, 
         "Average Score": round(average_score, 2),
         "breakdown": {
             "Head Position": {"score": round(head_score, 1), "feedback": head_feedback},
@@ -87,7 +85,6 @@ def analyze_video(video_path, output_path):
     
     TEXT_COLOR = (0, 255, 255) 
 
-    ## PHASE ## Variables for phase detection
     phase = "Stance"
     prev_landmarks = None
     frame_counter = 0
@@ -104,9 +101,6 @@ def analyze_video(video_path, output_path):
 
         try:
             landmarks = results.pose_landmarks.landmark
-            
-            # --- METRIC CALCULATIONS ---
-            # ... (elbow, spine, head, foot angle calculations as before) ...
             left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
             left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
             left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
@@ -126,7 +120,6 @@ def analyze_video(video_path, output_path):
             foot_angle_rad = np.arctan2(left_foot_index[1] - left_heel[1], left_foot_index[0] - left_heel[0])
             foot_angle_deg = 180 - np.degrees(foot_angle_rad)
 
-            ## PHASE ## Heuristic-based phase detection using joint velocities
             if prev_landmarks:
                 left_ankle_pos = np.array([landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y])
                 prev_ankle_pos = np.array([prev_landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].x, prev_landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value].y])
@@ -143,17 +136,16 @@ def analyze_video(video_path, output_path):
                 elif phase == "Downswing" and wrist_velocity < 0.03:
                     phase = "Follow-through"
 
-            prev_landmarks = landmarks # Update previous landmarks for the next frame
+            prev_landmarks = landmarks
 
             metrics_history.append({
                 'elbow_angle': elbow_angle, 
                 'spine_angle': spine_angle, 
                 'head_knee_dist': head_knee_dist,
                 'foot_angle': foot_angle_deg,
-                'phase': phase ## PHASE ##
+                'phase': phase 
             })
             
-            # --- DISPLAY METRICS ON FRAME ---
             head_feedback = "HEAD OK" if head_knee_dist <= 0.05 else "HEAD NOT OVER KNEE"
             cv2.putText(frame, head_feedback, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0) if head_feedback == "HEAD OK" else (0, 0, 255), 2, cv2.LINE_AA)
 
@@ -163,7 +155,6 @@ def analyze_video(video_path, output_path):
             foot_pos = tuple(np.multiply(left_foot_index, [frame_width, frame_height]).astype(int))
             cv2.putText(frame, f"Foot: {int(foot_angle_deg)} deg", foot_pos, cv2.FONT_HERSHEY_SIMPLEX, 0.7, TEXT_COLOR, 2, cv2.LINE_AA)
             
-            ## PHASE ## Display the current phase on the video
             cv2.putText(frame, f"Phase: {phase}", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, TEXT_COLOR, 2, cv2.LINE_AA)
 
 
