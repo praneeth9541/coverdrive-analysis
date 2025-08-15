@@ -80,7 +80,7 @@ def analyze_video(video_path, output_path):
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     
-    fourcc = cv2.VideoWriter_fourcc(*'avc1')
+    fourcc = cv2.VideoWriter_fourcc(*'X264')
     out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
     if not out.isOpened():
         print("Error: VideoWriter failed to open. Check that the path is correct and codecs are available.")
