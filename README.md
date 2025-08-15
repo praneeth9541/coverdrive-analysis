@@ -12,7 +12,7 @@ The analysis operates on a set of key assumptions derived from the project scope
 
 - **Heuristic-Based Phase Detection:** The shot is segmented into phases (Stance, Stride, Downswing, etc.) using a heuristic model based on joint velocities. This is not a machine-learning model and may misclassify phases if a player's movements are unconventional or not clearly distinct.
 - **Rule-Based Skill Grading:** The final skill grade (Beginner / Intermediate / Advanced) is determined by a simple set of thresholds based on an average of the metric scores. It is not a learned model trained on a large dataset of cricketers.
-- **Video Codec Dependency:** The ability to generate a playable annotated video depends on the video codecs (specifically H.264/AVC) being available to the OpenCV library on the system where the code is run.
+- **Video Codec Dependency:** Due to some unsupported video codec dependencies on streamlit cloud, this code is unable to display the processed video in the app, but users can download the processed video
 
 ## Scoring Heuristics
 
