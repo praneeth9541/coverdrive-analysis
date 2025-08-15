@@ -82,7 +82,9 @@ def analyze_video(video_path, output_path):
     
     fourcc = cv2.VideoWriter_fourcc(*'avc1')
     out = cv2.VideoWriter(output_path, fourcc, fps, (frame_width, frame_height))
-    
+    if not out.isOpened():
+        print("Error: VideoWriter failed to open. Check that the path is correct and codecs are available.")
+        return None, {"error": "Failed to create output video."}
     TEXT_COLOR = (0, 255, 255) 
 
     phase = "Stance"
