@@ -34,14 +34,12 @@ if uploaded_file is not None:
     else:
         st.success('Analysis complete! 🎉')
         
-        # --- Simplified Layout ---
         st.header("Download Your Results")
 
-        # Read the video file bytes for the download button
         with open(annotated_video_path, 'rb') as video_file:
             video_bytes = video_file.read()
         
-        # Create the download button for the video
+        
         st.download_button(
             label="Download Annotated Video (.mp4)",
             data=video_bytes,
@@ -75,8 +73,6 @@ if uploaded_file is not None:
         else:
             st.warning("Could not generate a report for this video.")
 
-        # Clean up the output temporary file
         os.remove(output_path)
     
-    # Always clean up the input temporary file
     os.remove(input_path)
